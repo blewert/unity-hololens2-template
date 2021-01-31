@@ -10,8 +10,28 @@ public class ConsoleRedirectTo3DText : MonoBehaviour
 
     public Queue<string> consoleMessages = new Queue<string>();
 
-    [Range(2, 10)]
+    [Range(2, 20)]
     public int QUEUE_MAX_LENGTH = 5;
+
+    public void OnEnable()
+    {
+        Application.logMessageReceived += HandleLogMessage;
+    }
+
+    public void OnDisable()
+    {
+        Application.logMessageReceived -= HandleLogMessage;
+    }
+
+    private void HandleLogMessage(string logStr, string stack, LogType type)
+    {   
+        //Prepend if needed
+        if(type == LogType.Error)
+            logStr = $"ERROR: {logStr}";
+
+        //Log the message
+        this.Log(logStr);
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -23,7 +43,7 @@ public class ConsoleRedirectTo3DText : MonoBehaviour
     {
         while(true)
         {
-            this.Log($"Update, the time is {Time.time}");
+            Debug.Log($"Update, the time is {Time.time}");
             yield return new WaitForSeconds(0.25f);
         }
     }
